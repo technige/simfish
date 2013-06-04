@@ -1,0 +1,124 @@
+Fish Tank Simulator
+===================
+
+Fish Tank Simulator is a simple turn-based game with a curses interface. It has
+been built and tested on Ubuntu 12.04 using Python 2.7.3 and PyCharm 2.5.1. To
+run, simply execute the simfish.py script within the src directory.
+
+
+The Game
+--------
+
+The game interface consists of a virtual fish tank into which any number of
+fish and snails may be placed. Additionally, parcels of food may be dropped
+into the tank to keep the creatures fed. Each living creature has a fixed life
+span which drops one point per turn but which may be increased by eating. Be
+careful of the piranhas as they will not only eat the fish food but will
+happily consume other fish!
+
+Also, make sure to keep an eye on the tank temperature - if it gets too low or
+then your fish may not survive. If you do end up with too many dead fish then
+simply remove the dead fish or empty the tank completely and start again.
+
+The game will progress automatically, taking one turn each second, and allows
+keys to be pressed at any time. The basic controls are as follows:
+
+    S - add sun fish
+    D - add diver fish
+    P - add piranha fish
+    C - add clockwork fish
+    Z - add snail
+    F - drop food
+
+    [ - decrease temperature
+    ] - increase temperature
+
+    R - remove all dead creatures
+    E - empty the tank
+    Q - quit the game
+
+The bestiary below will help you to recognise the occupants of your tank:
+
+    \/ o\   sun fish
+    /\__(   these enjoy the light and will tend to swim near the surface
+
+    \/ -\   diver fish
+    /\__(   these prefer the dark so will swim nearer the bottom
+
+    \/ o\   piranha fish
+    /\_::   these predators might eat any unsuspecting sun fish and diver fish
+
+    \/[+\   clockwork fish
+    /\__/   these are only toys so don't need to eat or breathe
+
+       oo   snail
+    (@)_]   these have a short life span and will sink when dead
+
+
+The Code
+--------
+
+The source code for the tank is contained simply within the class called
+`Tank`. Instances of this class expose a simple API to allow contained items
+access to features of the tank without being tightly coupled to its
+implementation. Methods exposed by `Tank` are as follows:
+
+    put(item, [x, [y]])
+    add an item into the tank (optionally at a specified position)
+
+    remove(item)
+    remove a specific item from the tank
+
+    remove_dead()
+    remove all dead creatures form the tank
+
+    empty()
+    remove everything from the tank
+
+    items_with(item)
+    fetch a list of all items overlapping the item specified
+
+    move(item, dx, dy)
+    attempt to move a specific item by the amounts provided
+
+    warm()
+    increase the tank temperature
+
+    cool()
+    decrease the tank temperature
+
+    temperature()
+    read the current tank temperature
+
+    turn()
+    take a game turn (this iterates through turns for all contained items)
+
+    draw()
+    draw the tank to the curses screen supplied on tank construction
+
+Contained within the `Tank` class is a base class called `Item`. This provides
+a foundation from which all item classes should inherit. The game items
+currently available have been built against the following inheritance
+hierarchy:
+
+    + Tank.Item (any item which may be contained within a tank)
+    |
+    +---+ OrganicItem (these can be used as a food source)
+    |   |
+    |   +---+ Animal (these can also eat, breathe and die)
+    |   |   |
+    |   |   +---+ SunFish[*]
+    |   |   |
+    |   |   +---+ DiverFish[*]
+    |   |   |
+    |   |   +---+ PiranhaFish[*]
+    |   |   |
+    |   |   +---+ Snail[*]
+    |   |
+    |   +---+ FishFood (organic but not a living creature)
+    |
+    +---+ ClockworkFish[*] (can move like a normal fish but is inorganic)
+
+The classes marked with [*] also inherit the `Mobile` trait which provides
+swimming capabilities. This does not form part of the hierarchy itself since
+it applies only to selected members of the tree.
